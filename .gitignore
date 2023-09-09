@@ -1,0 +1,14 @@
+# Ignore all files and directories starting with a dot
+*.
+
+# Ignore all temporary files
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore all npm package files
+node_modules/
+
+# Ignore all build artifacts
+dist/
+
+*.env

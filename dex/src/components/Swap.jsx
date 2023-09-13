@@ -1,4 +1,4 @@
-import { Popover, Modal, message } from 'antd';
+import { Popover, message } from 'antd';
 import {
   ArrowDownOutlined,
   DownOutlined,

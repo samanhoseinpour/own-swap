@@ -14,6 +14,8 @@ const SwapInputs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [changeToken, setChangeToken] = useState(1);
 
+  const [isConnected, setIsConnected] = useState(false);
+
   const [prices, setPrices] = useState(null);
 
   const changeAmount = (e) => {
@@ -37,6 +39,10 @@ const SwapInputs = () => {
     changeToken === 1 ? setTokenOne(tokenList[i]) : setTokenTwo(tokenList[i]);
 
     setIsOpen(false);
+  };
+
+  const fetchDexSwap = () => {
+    console.log('fetching prices');
   };
 
   return (
@@ -71,7 +77,7 @@ const SwapInputs = () => {
         placeholder="0"
         value={tokenOneAmount}
         onChange={changeAmount}
-        disabled={!prices}
+        // disabled={!prices}
       />
       <Input placeholder="0" value={tokenTwoAmount} disabled={true} />
       <div className="switchButton" onClick={switchTokens}>
@@ -86,6 +92,13 @@ const SwapInputs = () => {
         <img src={tokenTwo.img} alt="assets two logo" className="assetLogo" />
         {tokenTwo.ticker}
         <DownOutlined />
+      </div>
+      <div
+        className="swapButton"
+        disabled={!tokenOneAmount}
+        onClick={fetchDexSwap}
+      >
+        Swap
       </div>
     </>
   );

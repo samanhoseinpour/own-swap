@@ -1,33 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Input, Modal } from 'antd';
 import tokenList from '../tokenList.json';
 import { DownOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const SwapInputs = () => {
   const [tokenOneAmount, setTokenOneAmount] = useState(null);
   const [tokenTwoAmount, setTokenTwoAmount] = useState(null);
-
   const [tokenOne, setTokenOne] = useState(tokenList[0]);
   const [tokenTwo, setTokenTwo] = useState(tokenList[1]);
-
   const [isOpen, setIsOpen] = useState(false);
   const [changeToken, setChangeToken] = useState(1);
-
   const [isConnected, setIsConnected] = useState(false);
-
   const [prices, setPrices] = useState(null);
 
   const changeAmount = (e) => {
-    setTokenOneAmount(e.target.value);
+    const event = e.target.value;
+    setTokenOneAmount(event);
+
+    if (event && prices) {
+      setTokenTwoAmount((event * prices.ratio).toFixed(2));
+    } else {
+      setTokenTwoAmount(null);
+    }
   };
 
   const switchTokens = () => {
+    setPrices(null);
+    setTokenOneAmount(null);
+    setTokenTwoAmount(null);
+
     const one = tokenOne;
     const two = tokenTwo;
 
     setTokenOne(two);
     setTokenTwo(one);
+
+    fetchPrices(two.address, one.address);
   };
 
   const openModal = (asset) => {
@@ -36,7 +46,17 @@ const SwapInputs = () => {
   };
 
   const modifyToken = (i) => {
-    changeToken === 1 ? setTokenOne(tokenList[i]) : setTokenTwo(tokenList[i]);
+    setPrices(null);
+    setTokenOneAmount(null);
+    setTokenTwoAmount(null);
+
+    if (changeToken === 1) {
+      setTokenOne(tokenList[i]);
+      fetchPrices(tokenList[i].address, tokenTwo.address);
+    } else {
+      setTokenTwo(tokenList[i]);
+      fetchPrices(tokenOne.address, tokenList[i].address);
+    }
 
     setIsOpen(false);
   };
@@ -44,6 +64,23 @@ const SwapInputs = () => {
   const fetchDexSwap = () => {
     console.log('fetching prices');
   };
+
+  const fetchPrices = async (addressOne, addressTwo) => {
+    const response = await axios.get('http://localhost:3001/tokenPrice', {
+      params: {
+        addressOne,
+        addressTwo,
+      },
+    });
+
+    console.log(response.data);
+
+    setPrices(response.data);
+  };
+
+  useEffect(() => {
+    fetchPrices(tokenList[0].address, tokenList[1].address);
+  }, []);
 
   return (
     <>
@@ -77,7 +114,7 @@ const SwapInputs = () => {
         placeholder="0"
         value={tokenOneAmount}
         onChange={changeAmount}
-        // disabled={!prices}
+        disabled={!prices}
       />
       <Input placeholder="0" value={tokenTwoAmount} disabled={true} />
       <div className="switchButton" onClick={switchTokens}>

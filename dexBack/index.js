@@ -11,8 +11,6 @@ app.use(express.json());
 app.get('/tokenPrice', async (req, res) => {
   const { query } = req;
 
-  console.log(query);
-
   const reponseOne = await Moralis.EvmApi.token.getTokenPrice({
     address: query.addressOne,
   });

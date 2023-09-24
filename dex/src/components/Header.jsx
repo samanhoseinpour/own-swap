@@ -20,7 +20,11 @@ const Header = ({ address, isConnected, connect }) => {
           <img src={Eth} alt="ethereum logo" className="eth" />
           Ethereum
         </div>
-        <div className="connectButton">Connect</div>
+        <div className="connectButton" onClick={connect}>
+          {isConnected
+            ? address.slice(0, 4) + '...' + address.slice(38)
+            : 'Connect'}
+        </div>
       </div>
     </header>
   );
